@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Song form</title>
+<script type="text/javascript"
+	th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+<script type="text/javascript"
+	th:src="@{/webjars/bootstrap/4.2.1/js/bootstrap.js}"></script>
+<link rel="stylesheet"
+	th:href="@{/webjars/bootstrap/4.2.1/css/bootstrap.css}" />
+<link rel="stylesheet" th:href="@{/static/css/style.css}" />
+</head>
+<body>
+	<div th:replace="fragments.html::header"></div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+
+				<br>
+				<h3 th:class="text-center">SONG FORM</h3>
+				<br>
+
+				<form th:action="@{/save_song}" th:object="${song}" method="post"
+					enctype="multipart/form-data">
+
+					<input type="hidden" th:field="*{id}">
+
+					<div class="form-group row">
+						<label for="title"
+							class="col-sm-2 offset-sm-2 col-form-label text-right">TITLE</label>
+						<div class="col-sm-6">
+							<input type="text" id="title" class="form-control"
+								th:field="*{title}">
+							<p th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
+								th:class="text-danger"></p>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label for="album"
+							class="col-sm-2 offset-sm-2 col-form-label text-right">ALBUM</label>
+						<div class="col-sm-6">
+							<select id="album" th:field="*{album}" class="form-control">
+								<option value=""></option>
+								<option th:each="album : ${albums}" th:value="${album.id}"
+									th:text="${album.title + ' - ' + album.singer.name}"></option>
+							</select>
+							<p th:if="${#fields.hasErrors('album')}" th:errors="*{album}"
+								th:class="text-danger"></p>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label for="mp3File"
+							class="col-sm-2 offset-sm-2 col-form-label text-right">MP3&nbsp;FILE</label>
+						<div class="col-sm-6">
+							<input type="file" id="mp3File" name="mp3File"
+								class="form-control">
+							<p th:if="${#fields.hasErrors('file')}" th:errors="*{file}"
+								th:class="text-danger"></p>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<div class="col-sm-6 offset-sm-4">
+							<div class="btn-group">
+								<button type="submit" class="btn btn-primary">Save</button>
+								<button type="reset" class="btn btn-secondary">Reset</button>
+							</div>
+						</div>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

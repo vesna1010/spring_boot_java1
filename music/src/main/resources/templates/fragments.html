@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security5">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div th:fragment="header">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top"
+			style="background-color: white;">
+
+			<a class="navbar-brand" th:href="@{/}"> <img alt=""
+				th:src="@{/static/images/music.jpg}" width="80" height="50"
+				class="d-inline-block align-top">
+			</a>
+
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav">
+					<li th:class="nav-item"
+						th:classappend="${#httpServletRequest.requestURI == '/music/'} ? 'active'"><a
+						class="nav-link" th:href="@{/}">Home</a></li>
+
+					<li sec:authorize="isAuthenticated()" th:class="nav-item"
+						th:classappend="${#httpServletRequest.requestURI == '/music/singers'} ? 'active'"><a
+						class="nav-link" th:href="@{/singers}">Singers</a></li>
+
+					<li sec:authorize="isAuthenticated()" th:class="nav-item"
+						th:classappend="${#httpServletRequest.requestURI == '/music/albums'} ? 'active'"><a
+						class="nav-link" th:href="@{/albums}">Albums</a></li>
+
+					<li sec:authorize="isAuthenticated()" th:class="nav-item"
+						th:classappend="${#httpServletRequest.requestURI == '/music/songs'} ? 'active'"><a
+						class="nav-link" th:href="@{/songs}">Songs</a></li>
+
+					<li sec:authorize="hasRole('ADMIN')" th:class="nav-item"
+						th:classappend="${#httpServletRequest.requestURI == '/music/users'} ? 'active'"><a
+						class="nav-link" th:href="@{/users}">Users</a></li>
+
+					<li sec:authorize="isAuthenticated()" th:class="nav-item"
+						th:classappend="${#httpServletRequest.requestURI == '/music/add_singer'} ? 'active'"><a
+						class="nav-link" th:href="@{/add_singer}">Add Singer</a></li>
+
+					<li sec:authorize="isAuthenticated()" th:class="nav-item"
+						th:classappend="${#httpServletRequest.requestURI == '/music/add_album'} ? 'active'"><a
+						class="nav-link" th:href="@{/add_album}">Add Album</a></li>
+
+					<li sec:authorize="isAuthenticated()" th:class="nav-item"
+						th:classappend="${#httpServletRequest.requestURI == '/music/add_song'} ? 'active'"><a
+						class="nav-link" th:href="@{/add_song}">Add Song</a></li>
+
+					<li sec:authorize="hasRole('ADMIN')" th:class="nav-item"
+						th:classappend="${#httpServletRequest.requestURI == '/music/add_user'} ? 'active'"><a
+						class="nav-link" th:href="@{/add_user}">Add User</a></li>
+				</ul>
+
+				<form class="form-inline my-2 mx-5 my-lg-0">
+					<input class="form-control mr-sm-2" type="search" name="value"
+						placeholder="Search" aria-label="Search">
+					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				</form>
+			</div>
+
+			<div sec:authorize="isAnonymous()">
+				<a th:href="@{/login}">Log&nbsp;in</a>&emsp;
+				<a th:href="@{/add_user}">Register</a>
+			</div>
+
+			<div sec:authorize="isAuthenticated()">
+				<form th:action="@{/logout}" method="post">
+					<input type="submit" class="btn btn-secondary" value="Log out" />
+				</form>
+			</div>
+
+			<button type="button" class="navbar-toggler" data-toggle="collapse"
+				data-target="#navbarNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+		</nav>
+	</div>
+
+	<nav th:fragment="pagination"
+		th:with="currentPage=${page.getNumber() + 1}, totalPages = ${page.getTotalPages()},
+	             firstPage = ${(currentPage - 2) > 1 ? (currentPage - 2) : 1},
+	             lastPage = ${(firstPage + 4) < totalPages ? (firstPage + 4) : totalPages},
+	             firstPage = ${(lastPage - 4) > 1 ? (lastPage - 4) : 1}">
+
+		<ul class="pagination">
+			<li class="page-item"
+				th:classappend="${!page.hasPrevious() } ? 'disabled'"><a
+				class="page-link"
+				th:href="@{${#httpServletRequest.requestURL} + '?page=' + ${page.number - 1} + '&size=' + ${page.size}}">Previous</a></li>
+			<li th:each="number :${#numbers.sequence( firstPage, lastPage)}"
+				th:class="page-item"
+				th:classappend="${number == page.number + 1} ? 'active'"><a
+				class="page-link"
+				th:href="@{${#httpServletRequest.requestURL} + '?page=' + ${number - 1} + '&size=' + ${page.size}}"
+				th:text="${number}"></a></li>
+			<li class="page-item"
+				th:classappend="${!page.hasNext() } ? 'disabled'"><a
+				class="page-link"
+				th:href="@{${#httpServletRequest.requestURL} +'?page=' + ${page.number + 1} + '&size=' + ${page.size}}">Next</a></li>
+		</ul>
+	</nav>
+
+</body>
+</html>
+
+
+
+
+
+
+

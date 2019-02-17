@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript"
+	th:src="@{/webjars/popper.js/1.14.7/dist/umd/popper.js}"></script>
+<script type="text/javascript"
+	th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+<script type="text/javascript"
+	th:src="@{/webjars/bootstrap/4.2.1/js/bootstrap.js}"></script>
+<link rel="stylesheet"
+	th:href="@{/webjars/bootstrap/4.2.1/css/bootstrap.css}" />
+<link rel="stylesheet" th:href="@{/static/css/style.css}" />
+</head>
+<body>
+
+	<div th:replace="fragments.html::header"></div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+
+				<div class="float-right">
+					<div class="dropdown">
+						<button class="btn btn-secondary dropdown-toggle" type="button"
+							data-toggle="dropdown">SORT</button>
+						<div class="dropdown-menu">
+							<a class="dropdown-item"
+								th:href="@{'/?page=' + ${page.number} + '&size=' + ${page.size} + '&sort=releaseDate,desc&id,asc'}">Release&nbsp;date</a>
+							<a class="dropdown-item"
+								th:href="@{'/?page=' + ${page.number}+ '&size=' + ${page.size} + '&sort=singer.name,asc&id,asc'}">Singer&nbsp;name</a>
+							<a class="dropdown-item"
+								th:href="@{'/?page=' + ${page.number}+ '&size=' + ${page.size}+ '&sort=title,asc&id,asc'}">Album&nbsp;title</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="float-left" th:each="album : ${page.content}"
+					style="padding: 10px;">
+					<a th:href="@{'/album_details?id=' + ${album.id}}"><img
+						width="150" height="150"
+						th:src="'data:image/jpeg;base64, ' + ${album.getLogoStr()}" /> </a> <br>
+					<br> <a th:href="@{'/album_details?id=' + ${album.id}}"> <span
+						th:text="${album.title}"></span><br></a> <a
+						th:href="@{'/singer_details?id=' + ${album.singer.id}}"><span
+						th:text="${album.singer.name}"></span></a>
+				</div>
+
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<br> <br><br> <br> <br>
+					<div th:replace="fragments.html::pagination"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

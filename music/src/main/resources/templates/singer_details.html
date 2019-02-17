@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Singer details</title>
+<script type="text/javascript"
+	th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+<script type="text/javascript"
+	th:src="@{/webjars/bootstrap/4.2.1/js/bootstrap.js}"></script>
+<link rel="stylesheet"
+	th:href="@{/webjars/bootstrap/4.2.1/css/bootstrap.css}" />
+<link rel="stylesheet" th:href="@{/static/css/style.css}" />
+</head>
+<body>
+
+	<div th:replace="fragments.html::header"></div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				<br>
+				<div class="float-left">
+					<img width="150" height="150"
+						th:src="'data:image/jpeg;base64, ' + ${singer.getPhotoStr()}" />
+				</div>
+				<div class="float-left">
+					&emsp;Singer&nbsp;:&nbsp;<span th:text="${singer.name}"></span><br>
+					&emsp;Birth date&nbsp;:&nbsp;<span
+						th:text="${#temporals.format(singer.birthDate, 'dd.MM.yyyy')}"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<br> <br>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<td class="font-weight-bold">ALBUMS</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="album, status : ${singer.albums}">
+								<td th:text="${status.index + 1}"></td>
+								<td th:text="${album.title}"></td>
+								<td><a class="btn btn-secondary"
+									th:href="@{'/album_details?id=' + ${album.id}}">View&nbsp;Details</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div></div>
+	</div>
+
+</body>
+</html>

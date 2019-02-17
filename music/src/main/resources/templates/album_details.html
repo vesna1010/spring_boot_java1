@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security5">
+<head>
+<meta charset="UTF-8">
+<title>Album details</title>
+<script type="text/javascript"
+	th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+<script type="text/javascript"
+	th:src="@{/webjars/bootstrap/4.2.1/js/bootstrap.js}"></script>
+<script type="text/javascript" th:src="@{/js/jQuery.js}"></script>
+<link rel="stylesheet"
+	th:href="@{/webjars/bootstrap/4.2.1/css/bootstrap.css}" />
+<link rel="stylesheet" th:href="@{/static/css/style.css}" />
+</head>
+<body>
+
+	<div th:replace="fragments.html::header"></div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				<br>
+				<div class="float-left">
+					<img width="150" height="150" class="float-left"
+						th:src="'data:image/jpeg;base64, ' + ${album.getLogoStr()}" />
+				</div>
+				<div class="float-left">
+					&emsp;Album&nbsp;:&nbsp;<span th:text="${album.title}"></span><br>
+					&emsp;Singer&nbsp;:&nbsp;<span th:text="${album.singer.name}"></span><br>
+					&emsp;Released&nbsp;:&nbsp;<span
+						th:text="${#temporals.format(album.releaseDate, 'dd.MM.yyyy')}"></span><br>
+				</div>
+				<br> <br>
+				<div class="text-right" id="audio"></div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<br> <br>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<td class="font-weight-bold">SONGS</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="song, status : ${album.songs}">
+								<td th:text="${status.index + 1}"></td>
+								<td th:text="${song.title}"></td>
+								<td><a class="btn btn-secondary btnPlay" th:id="${song.id}">Play</a></td>
+								<td sec:authorize="isAuthenticated()"><a
+									class="btn btn-success"
+									th:href="@{'/download_song?id=' + ${song.id}}"
+									th:download="${song.title}">Download</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Singers</title>
+<script type="text/javascript"
+	th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+<script type="text/javascript"
+	th:src="@{/webjars/bootstrap/4.2.1/js/bootstrap.js}"></script>
+<link rel="stylesheet"
+	th:href="@{/webjars/bootstrap/4.2.1/css/bootstrap.css}" />
+<link rel="stylesheet" th:href="@{/static/css/style.css}" />
+</head>
+<body>
+	<div th:replace="fragments.html::header"></div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+
+				<br>
+				<h3 class="text-center">SINGERS</h3>
+				<br>
+
+				<div class="table-responsive">
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr class="table-success">
+								<th>ID</th>
+								<th>NAME</th>
+								<th>BIRTH DATE</th>
+								<th>PHOTO</th>
+								<th>ALBUMS</th>
+								<th>MANAGE</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="6" class="text-center"
+									th:if="${#lists.isEmpty(page.content)}">No&nbsp;Data</td>
+							</tr>
+							<tr th:each="singer : ${page.content}">
+								<td th:text="${singer.id}"></td>
+								<td th:text="${singer.name}"></td>
+								<td
+									th:text="${#temporals.format(singer.birthDate, 'dd.MM.yyyy')}"></td>
+								<td><img width="100" height="100"
+									th:src="'data:image/jpeg;base64, ' + ${singer.getPhotoStr()}" /></td>
+								<td>
+									<div th:each="album : ${singer.albums}"
+										th:text="${album.title}"></div>
+								</td>
+								<td><a th:href="@{'/edit_singer?id=' + ${singer.id}}"
+									class="btn btn-primary">Edit</a> <a
+									th:href="@{'/delete_singer?id=' + ${singer.id}}"
+									class="btn btn-danger">Delete</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-12">
+						<br> <br><br> <br> <br>
+						<div th:replace="fragments.html::pagination"></div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>
