@@ -1,12 +1,14 @@
 package com.vesna1010.music.controller;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
+import org.springframework.data.web.SortDefault.SortDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -97,25 +99,9 @@ public class AlbumsController {
 
 	@PreAuthorize("permitAll")
 	@ModelAttribute(value = "singers")
-	public List<Singer> singers() {
-		List<Singer> singers = singerService.findAll();
-
-		Collections.sort(singers, new SingerComparator());
-
-		return singers;
-	}
-
-	private class SingerComparator implements Comparator<Singer> {
-
-		@Override
-		public int compare(Singer singer1, Singer singer2) {
-			Comparator<Singer> comparator = Comparator.comparing(Singer::getName);
-
-			comparator = comparator.thenComparing(Singer::getId);
-
-			return comparator.compare(singer1, singer2);
-		}
-
+	public List<Singer> singers(@SortDefaults({ @SortDefault(sort = "name", direction = Direction.ASC),
+			@SortDefault(sort = "id", direction = Direction.ASC) }) Sort sort) {
+		return singerService.findAll(sort);
 	}
 
 }
