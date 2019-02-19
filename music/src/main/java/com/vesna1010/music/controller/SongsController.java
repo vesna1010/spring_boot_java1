@@ -1,12 +1,14 @@
 package com.vesna1010.music.controller;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
+import org.springframework.data.web.SortDefault.SortDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -82,42 +84,26 @@ public class SongsController {
 	@GetMapping(value = "/download_song", produces = "audio/mp3")
 	public @ResponseBody byte[] downloadSong(@RequestParam Long id) {
 		Song song = songService.findById(id);
-		
+
 		song.setCounter(song.getCounter() + 1);
 		songService.save(song);
 
 		return song.getFile();
 	}
-	
+
 	@PreAuthorize("permitAll")
 	@GetMapping(value = "/song", produces = "audio/mp3")
 	public @ResponseBody byte[] getSongFile(@RequestParam Long id) {
 		Song song = songService.findById(id);
-		
+
 		return song.getFile();
 	}
-	
+
 	@PreAuthorize("permitAll")
 	@ModelAttribute("albums")
-	public List<Album> albums() {
-		List<Album> albums = albumService.findAll();
-
-		Collections.sort(albums, new AlbumComparator());
-
-		return albums;
-	}
-
-	private class AlbumComparator implements Comparator<Album> {
-
-		@Override
-		public int compare(Album album1, Album album2) {
-			Comparator<Album> comparator = Comparator.comparing(Album::getTitle);
-
-			comparator = comparator.thenComparing(Album::getId);
-
-			return comparator.compare(album1, album2);
-		}
-
+	public List<Album> albums(@SortDefaults({ @SortDefault(sort = "title", direction = Direction.ASC),
+			@SortDefault(sort = "id", direction = Direction.ASC) }) Sort sort) {
+		return albumService.findAll(sort);
 	}
 
 }
