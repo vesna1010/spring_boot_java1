@@ -21,8 +21,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12">
-
-				<div class="float-right">
+				<div class="text-right">
 					<div class="dropdown">
 						<button class="btn btn-secondary dropdown-toggle" type="button"
 							data-toggle="dropdown">SORT</button>
@@ -36,7 +35,11 @@
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
 
+		<div class="row">
+			<div class="col-sm-12">
 				<div class="float-left" th:each="album : ${page.content}"
 					style="padding: 10px;">
 					<a th:href="@{'/album_details?id=' + ${album.id}}"><img
@@ -47,16 +50,16 @@
 						th:href="@{'/singer_details?id=' + ${album.singer.id}}"><span
 						th:text="${album.singer.name}"></span></a>
 				</div>
-
 			</div>
+		</div>
 
-			<div class="row">
-				<div class="col-sm-12">
-					<br> <br><br> <br> <br>
-					<div th:replace="fragments.html::pagination"></div>
-				</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<br> <br> <br> <br> <br>
+				<div th:replace="fragments.html::pagination"></div>
 			</div>
 		</div>
 	</div>
+
 </body>
 </html>
