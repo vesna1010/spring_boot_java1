@@ -84,7 +84,8 @@
 		th:with="currentPage=${page.getNumber() + 1}, totalPages = ${page.getTotalPages()},
 	             firstPage = ${(currentPage - 2) > 1 ? (currentPage - 2) : 1},
 	             lastPage = ${(firstPage + 4) < totalPages ? (firstPage + 4) : totalPages},
-	             firstPage = ${(lastPage - 4) > 1 ? (lastPage - 4) : 1}">
+	             firstPage = ${(lastPage - 4) > 1 ? (lastPage - 4) : 1},
+	             lastPage = ${(lastPage < firstPage) ? firstPage : lastPage}">
 
 		<ul class="pagination">
 			<li class="page-item"
