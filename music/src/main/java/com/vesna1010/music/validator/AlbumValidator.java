@@ -2,7 +2,6 @@ package com.vesna1010.music.validator;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -13,7 +12,7 @@ import com.vesna1010.music.model.Song;
 @Component
 public class AlbumValidator implements Validator {
 
-	private String titleRegex = "^[a-zA-Z0-9\\s]{3,}$";
+	public static final String TITLE_REGEXP = "^[a-zA-Z0-9\\s]{3,}$";
 
 	@Override
 	public boolean supports(Class<?> cls) {
@@ -23,32 +22,47 @@ public class AlbumValidator implements Validator {
 	@Override
 	public void validate(Object object, Errors errors) {
 		Album album = (Album) object;
-		String title = album.getTitle();
-		LocalDate releaseDate = album.getReleaseDate();
-		Singer singer = album.getSinger();
-		byte[] logo = album.getLogo();
-		List<Song> songs = album.getSongs();
 
-		if (!title.matches(titleRegex)) {
+		if (isInvalidTitle(album.getTitle())) {
 			errors.rejectValue("title", "album.title");
 		}
 
-		if (releaseDate == null) {
+		if (isInvalidReleaseDate(album.getReleaseDate())) {
 			errors.rejectValue("releaseDate", "album.releaseDate");
 		}
 
-		if (singer == null) {
+		if (isInvalidSinger(album.getSinger())) {
 			errors.rejectValue("singer", "album.singer");
 		}
 
-		if (logo == null || logo.length == 0) {
+		if (isInvalidLogo(album.getLogo())) {
 			errors.rejectValue("logo", "album.logo");
 		}
 
-		if (songs.isEmpty()) {
+		if (isInvalidSongs(album.getSongs())) {
 			errors.rejectValue("songs", "album.songs");
 		}
 
+	}
+
+	private boolean isInvalidTitle(String title) {
+		return (title == null || !title.matches(TITLE_REGEXP));
+	}
+
+	private boolean isInvalidReleaseDate(LocalDate releaseDate) {
+		return (releaseDate == null);
+	}
+
+	private boolean isInvalidSinger(Singer singer) {
+		return (singer == null);
+	}
+
+	private boolean isInvalidLogo(byte[] logo) {
+		return (logo == null || logo.length == 0);
+	}
+
+	private boolean isInvalidSongs(List<Song> songs) {
+		return (songs == null || songs.isEmpty());
 	}
 
 }
