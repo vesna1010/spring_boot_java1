@@ -6,12 +6,20 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import com.vesna1010.music.MusicApplicationTests;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.test.context.junit4.SpringRunner;
 
-public abstract class BaseRepositoryTest extends MusicApplicationTests {
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public abstract class BaseRepositoryTest {
+
+	public static Pageable PAGEABLE = PageRequest.of(1, 2, Sort.by("id"));
 
 	@PersistenceContext
 	protected EntityManager entityManager;
@@ -35,10 +43,10 @@ public abstract class BaseRepositoryTest extends MusicApplicationTests {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return image;
 	}
-	
+
 	public byte[] getSong() {
 		File file = null;
 		InputStream is = null;
@@ -58,9 +66,8 @@ public abstract class BaseRepositoryTest extends MusicApplicationTests {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return image;
 	}
-	
 
 }
