@@ -5,18 +5,15 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNotNull;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.TypedQuery;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.jdbc.Sql;
 import com.vesna1010.music.model.Album;
+import com.vesna1010.music.model.Singer;
 import com.vesna1010.music.model.Song;
 
 @Sql(scripts = "classpath:sql/music.sql")
@@ -27,8 +24,7 @@ public class SongRepositoryTest extends BaseRepositoryTest {
 
 	@Test
 	public void findAllByPageTest() {
-		Pageable pageable = PageRequest.of(1, 2, new Sort(Direction.ASC, "id"));
-		Page<Song> page2 = repository.findAll(pageable);
+		Page<Song> page2 = repository.findAll(PAGEABLE);
 		List<Song> songs = page2.getContent();
 
 		assertThat(page2.getTotalPages(), is(3));
@@ -54,37 +50,29 @@ public class SongRepositoryTest extends BaseRepositoryTest {
 
 	@Test
 	public void saveTest() {
-		Album album = loadAlbumById(1L);
+		Singer singer = new Singer(1L, "Singer search A", LocalDate.of(1987, 12, 1), getImage());
+		Album album = new Album(1L, "Title search A", LocalDate.of(2019, 1, 2), singer, getSong());
 		Song song = new Song("Title", album, getSong());
-		
+
 		song = repository.save(song);
 
 		assertNotNull(song.getId());
 		assertThat(repository.count(), is(7L));
 	}
-	
+
 	@Test
 	public void updateSongTest() {
-		Album album = loadAlbumById(1L);
-		Song song = new Song(1L, "New Title", album, getSong());
+		Optional<Song> optional = repository.findById(1L);
+		Song song = optional.get();
+
+		song.setTitle("New Title");
 
 		song = repository.save(song);
-		
-		Optional<Song> optional = repository.findById(1L);
-		song = optional.get();
 
 		assertThat(song.getTitle(), is("New Title"));
 		assertThat(repository.count(), is(6L));
 	}
-	
-	public Album loadAlbumById(Long id) {
-		TypedQuery<Album> query = entityManager.createQuery("select a from Album a where a.id=:id", Album.class);
 
-		query.setParameter("id", id);
-
-		return query.getSingleResult();
-	} 
-	
 	@Test
 	public void deleteByIdTest() {
 		repository.deleteById(1L);
