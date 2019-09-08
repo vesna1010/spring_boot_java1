@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 public abstract class BaseRepositoryTest {
 
 	public static Pageable PAGEABLE = PageRequest.of(1, 2, Sort.by("id"));
-
-	@PersistenceContext
-	protected EntityManager entityManager;
 
 	public byte[] getImage() {
 		File file = null;
