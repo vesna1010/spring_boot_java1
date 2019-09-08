@@ -9,16 +9,9 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
-
-import javax.persistence.TypedQuery;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.jdbc.Sql;
 import com.vesna1010.music.model.Album;
 import com.vesna1010.music.model.Singer;
@@ -44,8 +37,7 @@ public class AlbumRepositoryTest extends BaseRepositoryTest {
 
 	@Test
 	public void findAllByPageTest() {
-		Pageable pageable = PageRequest.of(1, 2, new Sort(Direction.ASC, "id"));
-		Page<Album> page2 = repository.findAll(pageable);
+		Page<Album> page2 = repository.findAll(PAGEABLE);
 		List<Album> albums = page2.getContent();
 
 		assertThat(page2.getTotalPages(), is(3));
@@ -56,15 +48,12 @@ public class AlbumRepositoryTest extends BaseRepositoryTest {
 
 	@Test
 	public void findAllByTitleContainsOrSingerNameContainsOrSongsTitleContainsByPageTest() {
-		Pageable pageable = PageRequest.of(0, 3, new Sort(Direction.ASC, "id"));
-		Page<Album> page2 = repository.findAllByRequiredValue("sEaR", pageable);
+		Page<Album> page2 = repository.findAllByRequiredValue("sEaR", PAGEABLE);
 		List<Album> albums = page2.getContent();
 
-		assertThat(page2.getTotalPages(), is(1));
-		assertThat(albums, hasSize(3));
-		assertThat(albums.get(0).getTitle(), is("Title search A"));
-		assertThat(albums.get(1).getTitle(), is("Title B"));
-		assertThat(albums.get(2).getTitle(), is("Title D"));
+		assertThat(page2.getTotalPages(), is(2));
+		assertThat(albums, hasSize(1));
+		assertThat(albums.get(0).getTitle(), is("Title D"));
 	}
 
 	@Test
@@ -86,7 +75,7 @@ public class AlbumRepositoryTest extends BaseRepositoryTest {
 
 	@Test
 	public void saveTest() {
-		Singer singer = loadSingerById(1L);
+		Singer singer = new Singer(1L, "Singer search A", LocalDate.of(1987, 12, 1), getImage());
 		Album album = new Album("Title F", LocalDate.of(2019, Month.JANUARY, 7), singer, getImage());
 		album.addSong(new Song("Title", getSong()));
 
@@ -98,36 +87,16 @@ public class AlbumRepositoryTest extends BaseRepositoryTest {
 
 	@Test
 	public void updateTest() {
-		Singer singer = loadSingerById(1L);
-		Song song = loadSongById(5L);
-		Album album = new Album(1L, "Title", LocalDate.of(2019, Month.JANUARY, 2), singer, getImage());
+		Optional<Album> optional = repository.findById(1L);
+		Album album = optional.get();
 
-		album.addSong(song);
+		album.setTitle("New Title");
 
 		album = repository.save(album);
-		
-		Optional<Album> optional = repository.findById(1L);
-		album = optional.get();
 
-		assertThat(album.getTitle(), is("Title"));
+		assertThat(album.getTitle(), is("New Title"));
 		assertThat(album.getReleaseDate(), is(LocalDate.of(2019, 1, 2)));
-		assertThat(album.getSongs(), hasSize(1));
-	}
-
-	private Singer loadSingerById(Long id) {
-		TypedQuery<Singer> query = entityManager.createQuery("select s from Singer s where s.id=:id", Singer.class);
-
-		query.setParameter("id", id);
-
-		return query.getSingleResult();
-	}
-
-	private Song loadSongById(Long id) {
-		TypedQuery<Song> query = entityManager.createQuery("select s from Song s where s.id=:id", Song.class);
-
-		query.setParameter("id", id);
-
-		return query.getSingleResult();
+		assertThat(album.getSongs(), hasSize(2));
 	}
 
 	@Test
