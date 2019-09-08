@@ -12,10 +12,6 @@ import java.util.Optional;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.jdbc.Sql;
 import com.vesna1010.music.model.Singer;
 
@@ -38,8 +34,7 @@ public class SingerRepositoryTest extends BaseRepositoryTest {
 
 	@Test
 	public void findAllByPageTest() {
-		Pageable pageable = PageRequest.of(1, 2, new Sort(Direction.ASC, "id"));
-		Page<Singer> page2 = repository.findAll(pageable);
+		Page<Singer> page2 = repository.findAll(PAGEABLE);
 		List<Singer> singers = page2.getContent();
 
 		assertThat(page2.getTotalPages(), is(2));
@@ -77,12 +72,12 @@ public class SingerRepositoryTest extends BaseRepositoryTest {
 
 	@Test
 	public void updateTest() {
-		Singer singer = new Singer(1L, "Singer", LocalDate.of(1987, Month.DECEMBER, 1), getImage());
+		Optional<Singer> optional = repository.findById(1L);
+		Singer singer = optional.get();
+
+		singer.setName("Singer");
 
 		singer = repository.save(singer);
-		
-		Optional<Singer> optional = repository.findById(1L);
-		singer = optional.get();
 
 		assertThat(singer.getName(), is("Singer"));
 		assertThat(singer.getBirthDate(), is(LocalDate.of(1987, Month.DECEMBER, 1)));
