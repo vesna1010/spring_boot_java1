@@ -12,20 +12,15 @@ import javax.transaction.Transactional;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
-import com.vesna1010.music.MusicApplicationTests;
 import com.vesna1010.music.enums.Role;
 import com.vesna1010.music.model.User;
 import com.vesna1010.music.repository.UserRepository;
 
 @Transactional
 @Sql(scripts = "classpath:sql/users.sql")
-public class UserRepositoryTest extends MusicApplicationTests {
+public class UserRepositoryTest extends BaseRepositoryTest {
 
 	@Autowired
 	private UserRepository repository;
@@ -34,8 +29,7 @@ public class UserRepositoryTest extends MusicApplicationTests {
 
 	@Test
 	public void findAllTest() {
-		Pageable pageable = PageRequest.of(1, 2, new Sort(Direction.ASC, "id"));
-		Page<User> page2 = repository.findAll(pageable);
+		Page<User> page2 = repository.findAll(PAGEABLE);
 		List<User> users = page2.getContent();
 
 		assertThat(page2.getTotalPages(), is(2));
@@ -73,12 +67,12 @@ public class UserRepositoryTest extends MusicApplicationTests {
 
 	@Test
 	public void updateTest() {
-		User user = new User(1L, "Name A", "emailA@gmail.com", encoder.encode("PasswordA"), false, Role.ADMIN);
+		Optional<User> optional = repository.findByEmail("emailA@gmail.com");
+		User user = optional.get();
+
+		user.setEnabled(false);
 
 		user = repository.save(user);
-
-		Optional<User> optional = repository.findById(1L);
-		user = optional.get();
 
 		assertFalse(user.isEnabled());
 		assertThat(repository.count(), is(4L));
