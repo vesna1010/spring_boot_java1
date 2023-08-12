@@ -45,16 +45,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		            .loginPage("/login")
 		            .loginProcessingUrl("/login")
 		            .failureUrl("/login?error")
-				    .defaultSuccessUrl("/")
-				    .usernameParameter("email")
-				    .passwordParameter("password")
-				.and()
-				.logout()
-				    .logoutUrl("/logout")
-				    .logoutSuccessUrl("/login")
-				.and()
-				.exceptionHandling()
-                    .accessDeniedPage("/denied");
+			    .defaultSuccessUrl("/")
+			    .usernameParameter("email")
+			    .passwordParameter("password")
+			
+			.and().logout()
+			    .logoutUrl("/logout")
+			    .logoutSuccessUrl("/login")
+			
+			.and().exceptionHandling()
+                            .accessDeniedPage("/denied");
 	}
 
 }
